@@ -12,14 +12,13 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Data
 @Entity
 @Table(name = "usuario")
+@Data
 public class UsuarioEntity implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,14 +41,14 @@ public class UsuarioEntity implements UserDetails {
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-          name = "usuarios_perfis",
-                    joinColumns = @JoinColumn(name = "usuario_id"),
-                    inverseJoinColumns = @JoinColumn(name = "perfis_id")
-  ) private Collection<PerfilEntity> perfis;
+      name = "usuarios_perfis",
+      joinColumns = @JoinColumn(name = "usuario_id"),
+      inverseJoinColumns = @JoinColumn(name = "perfis_id"))
+  private Collection<PerfilEntity> perfis;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of();
+    return perfis;
   }
 
   @Override
