@@ -5,10 +5,11 @@ import br.viesant.labmedical_x2.controllers.DTO.TokenResponse;
 import br.viesant.labmedical_x2.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -19,8 +20,9 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/login")
-  public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+  @ResponseStatus(HttpStatus.OK)
+  public TokenResponse login(@Valid @RequestBody LoginRequest loginRequest) {
 
-    return ResponseEntity.ok(authService.authenticate(loginRequest));
+    return authService.authenticate(loginRequest);
   }
 }

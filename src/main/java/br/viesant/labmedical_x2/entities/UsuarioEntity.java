@@ -47,8 +47,8 @@ public class UsuarioEntity implements UserDetails {
   private Collection<PerfilEntity> perfis;
 
   @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return perfis;
+  public String getUsername() {
+    return email;
   }
 
   @Override
@@ -57,7 +57,7 @@ public class UsuarioEntity implements UserDetails {
   }
 
   @Override
-  public String getUsername() {
-    return email;
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return perfis;
   }
 }
