@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.FORBIDDEN)
         .body(
             "Acesso negado: Você não tem permissão para acessar este recurso. \n"
-                + "(Usuário autenticado, mas sem permissão necessária)");
+                + ex.getLocalizedMessage());
   }
 
   // Validação de formulários:
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
 
   // Erro entidade não encontrada:
   @ExceptionHandler(EntityNotFoundException.class)
-  public ResponseEntity<String> handleEntityNotFoundException(IllegalArgumentException ex) {
+  public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 

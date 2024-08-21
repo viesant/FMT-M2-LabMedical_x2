@@ -35,9 +35,15 @@ public class PacienteController {
   public PacienteEntity createUser(@Valid @RequestBody PacienteRequest pacienteRequest) {
     return pacienteService.create(pacienteRequest);
   }
+
+  @GetMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public PacienteEntity getUserById(@PathVariable Long id, JwtAuthenticationToken token) {
+    return pacienteService.findById(id,token);
+  }
+
 /*
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
   @ResponseStatus(HttpStatus.OK)
   public  getPacienteById(@PathVariable Long id) {
     return pacienteService.findById(id);
