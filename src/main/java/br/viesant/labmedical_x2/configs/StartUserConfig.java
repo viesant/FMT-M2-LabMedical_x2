@@ -28,35 +28,36 @@ public class StartUserConfig implements CommandLineRunner {
     salvaPerfil("ADMIN");
     salvaPerfil("MEDICO");
     salvaPerfil("PACIENTE");
+    //    salvaPerfil(Perfil.ADMIN);
+    //    salvaPerfil(Perfil.MEDICO);
+    //    salvaPerfil(Perfil.PACIENTE);
 
-    if( usuarioRepository.findByEmail("admin@viesant.com").isEmpty()){
+    if (usuarioRepository.findByEmail("admin@viesant.com").isEmpty()) {
 
       UsuarioEntity admin = new UsuarioEntity();
       admin.setNome("admin");
-      admin.setEmail("admin@viesant.com"); //username
-      admin.setSenha(passwordEncoder.encode("admin")); //password
+      admin.setEmail("admin@viesant.com"); // username
+      admin.setSenha(passwordEncoder.encode("admin")); // password
 
       admin.setDataNascimento(LocalDate.now());
       admin.setCpf("123.456.789-99");
 
-      PerfilEntity perfilAdmin = perfilRepository.findByNome("ADMIN").orElseThrow(
-              () -> new EntityNotFoundException("Perfil ADMIN não existe!")
-//              () -> new RuntimeException("Perfil ADMIN não existe!")
-      );
+      PerfilEntity perfilAdmin =
+          perfilRepository
+              .findByAuthority("ADMIN")
+              .orElseThrow(() -> new EntityNotFoundException("Perfil ADMIN não existe!"));
 
       admin.setPerfis(Collections.singleton(perfilAdmin));
       usuarioRepository.save(admin);
-
-
     }
-
   }
 
   private void salvaPerfil(String perfil) {
-    if (perfilRepository.findByNome(perfil).isEmpty()) {
-      PerfilEntity novoPerfil = new PerfilEntity();
-      novoPerfil.setNome(perfil);
-      perfilRepository.save(novoPerfil);
-    }
+
+    if (perfilRepository.existsByAuthority(perfil)) return;
+
+    PerfilEntity novoPerfil = new PerfilEntity();
+    novoPerfil.setAuthority(perfil);
+    perfilRepository.save(novoPerfil);
   }
 }

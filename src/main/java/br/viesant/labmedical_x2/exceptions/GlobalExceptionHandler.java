@@ -3,6 +3,8 @@ package br.viesant.labmedical_x2.exceptions;
 import br.viesant.labmedical_x2.exceptions.DTO.ErrorValidationResponse;
 import com.sun.jdi.request.DuplicateRequestException;
 import java.util.List;
+
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -52,6 +54,12 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  }
+
+  // Erro entidade não encontrada:
+  @ExceptionHandler(EntityNotFoundException.class)
+  public ResponseEntity<String> handleEntityNotFoundException(IllegalArgumentException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 
   // Erro de leitura de mensagem JSON:

@@ -1,9 +1,10 @@
 package br.viesant.labmedical_x2.services;
 
+import static br.viesant.labmedical_x2.mappers.UsuarioMapper.*;
+
 import br.viesant.labmedical_x2.controllers.DTO.UsuarioRequest;
 import br.viesant.labmedical_x2.entities.PerfilEntity;
 import br.viesant.labmedical_x2.entities.UsuarioEntity;
-import br.viesant.labmedical_x2.mappers.UsuarioMapper;
 import br.viesant.labmedical_x2.repositories.PerfilRepository;
 import br.viesant.labmedical_x2.repositories.UsuarioRepository;
 import com.sun.jdi.request.DuplicateRequestException;
@@ -13,14 +14,16 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@AllArgsConstructor
 @Service
+@AllArgsConstructor
 public class UsuarioService implements UserDetailsService {
 
   private final UsuarioRepository usuarioRepository;
   private final PerfilRepository perfilRepository;
+  private final BCryptPasswordEncoder passwordEncoder;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -32,10 +35,16 @@ public class UsuarioService implements UserDetailsService {
   public UsuarioEntity create(UsuarioRequest usuarioRequest) {
 
     // verifica se usuario já foi cadastrado
-    if (usuarioRepository.existsByEmailOrCpf(usuarioRequest.email(), usuarioRequest.cpf())) {
-      throw new DuplicateRequestException(
-          "Já existe um usuário cadastrado com este e-mail ou CPF.");
+    if (usuarioRepository.existsByEmail(usuarioRequest.email())) {
+      throw new DuplicateRequestException("Já existe um usuário cadastrado com este e-mail.");
     }
+    if (usuarioRepository.existsByCpf(usuarioRequest.cpf())) {
+      throw new DuplicateRequestException("Já existe um usuário cadastrado com este CPF.");
+    }
+    //    if (usuarioRepository.existsByEmailOrCpf(usuarioRequest.email(), usuarioRequest.cpf())) {
+    //      throw new DuplicateRequestException(
+    //          "Já existe um usuário cadastrado com este e-mail ou CPF.");
+    //    }
 
     // verifica se perfil é válido
     List<PerfilEntity> perfis =
@@ -43,17 +52,22 @@ public class UsuarioService implements UserDetailsService {
             .map(
                 nome ->
                     perfilRepository
-                        .findByNome(nome)
+                        .findByAuthority(nome)
                         .orElseThrow(
                             () -> new IllegalArgumentException("Perfil não encontrado: " + nome)))
             .collect(Collectors.toList());
 
-    UsuarioEntity usuario = UsuarioMapper.toEntity(usuarioRequest);
-    usuario.setPerfis(perfis);
+    // mapeia request to entity:
+    UsuarioEntity usuario = toEntity(usuarioRequest, perfis);
+
+
+    // encripta senha:
+    usuario.setSenha(passwordEncoder.encode(usuarioRequest.senha()));
 
     return usuarioRepository.save(usuario);
   }
 
+  // para testes:
   public List<UsuarioEntity> findAll() {
     return usuarioRepository.findAll();
   }

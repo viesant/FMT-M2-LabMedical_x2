@@ -1,13 +1,13 @@
 package br.viesant.labmedical_x2.mappers;
 
 import br.viesant.labmedical_x2.controllers.DTO.UsuarioRequest;
+import br.viesant.labmedical_x2.entities.PerfilEntity;
 import br.viesant.labmedical_x2.entities.UsuarioEntity;
-import lombok.AllArgsConstructor;
+import java.util.List;
 
-@AllArgsConstructor
 public class UsuarioMapper {
 
-  public static UsuarioEntity toEntity(UsuarioRequest source) {
+  public static UsuarioEntity toEntity(UsuarioRequest source, List<PerfilEntity> perfis) {
     UsuarioEntity target = new UsuarioEntity();
 
     target.setNome(source.nome());
@@ -15,6 +15,8 @@ public class UsuarioMapper {
     target.setSenha(source.senha());
     target.setDataNascimento(source.dataNascimento());
     target.setCpf(source.cpf());
+    target.setPerfis(perfis);
+    
     return target;
 
     /*
@@ -23,8 +25,7 @@ public class UsuarioMapper {
      senha
      dataNascimento
      cpf
-     perfis -> este fica fora do mapper
+     perfis
     */
-
   }
 }

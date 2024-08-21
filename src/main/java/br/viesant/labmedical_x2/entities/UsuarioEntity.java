@@ -60,4 +60,15 @@ public class UsuarioEntity implements UserDetails {
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return perfis;
   }
+
+  public Boolean isPaciente() {
+    return perfis.stream().anyMatch(perfil -> perfil.getAuthority().equals("PACIENTE"));
+  }
+
+  public Boolean isAdminOrMedico() {
+    return perfis.stream()
+        .anyMatch(
+            perfil ->
+                perfil.getAuthority().equals("ADMIN") || perfil.getAuthority().equals("MEDICO"));
+  }
 }
