@@ -4,13 +4,19 @@ import static br.viesant.labmedical_x2.mappers.PacienteMapper.toEntity;
 import static br.viesant.labmedical_x2.mappers.PacienteMapper.updateEntity;
 
 import br.viesant.labmedical_x2.controllers.DTO.PacienteRequest;
+import br.viesant.labmedical_x2.controllers.DTO.PacienteResponse;
 import br.viesant.labmedical_x2.entities.PacienteEntity;
 import br.viesant.labmedical_x2.entities.UsuarioEntity;
+import br.viesant.labmedical_x2.mappers.PacienteMapper;
 import br.viesant.labmedical_x2.repositories.PacienteRepository;
 import br.viesant.labmedical_x2.repositories.UsuarioRepository;
 import com.sun.jdi.request.DuplicateRequestException;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -18,12 +24,13 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class PacienteService {
+
   private final UsuarioRepository usuarioRepository;
   private final PacienteRepository pacienteRepository;
 
   public PacienteEntity create(PacienteRequest pacienteRequest) {
-    //Valida usuarioId:
-    UsuarioEntity usuario  = validateRequestId(pacienteRequest.usuarioId());
+    // Valida usuarioId:
+    UsuarioEntity usuario = validateRequestId(pacienteRequest.usuarioId());
 
     // mapeia request to entity:
     PacienteEntity paciente = toEntity(pacienteRequest, usuario);
@@ -48,7 +55,6 @@ public class PacienteService {
                       new IllegalArgumentException(
                           "Usuário não associado a um cadastro de Paciente"));
 
-
       if (!paciente.getId().equals(id)) {
         throw new AccessDeniedException("Usuário não pode acessar informações de outro paciente");
       }
@@ -58,6 +64,20 @@ public class PacienteService {
         .findById(id)
         .orElseThrow(
             () -> new EntityNotFoundException("Nenhum paciente encontrado " + "com id: " + id));
+  }
+
+  public List<PacienteResponse> findAll() {
+    return pacienteRepository.findAll().stream()
+        .map(PacienteMapper::toResponse)
+        .collect(Collectors.toList());
+  }
+
+  public Page<PacienteResponse> findAll(String nome, String telefone, String email, Pageable pageable) {
+
+    return pacienteRepository.findByFilters(nome, telefone,email, pageable).map(PacienteMapper::toResponse);
+
+//    return pacienteRepository.findAllByNomeContainingAndTelefoneContainingAndEmailContaining(
+//            nome, telefone, email, pageable);
   }
 
   public PacienteEntity update(Long id, PacienteRequest pacienteRequest) {
@@ -71,7 +91,7 @@ public class PacienteService {
     // verifica se request.usuarioId é diferente de paciente.usuarioId:
     if (!pacienteRequest.usuarioId().equals(paciente.getUsuario().getId())) {
 
-      //Valida usuarioId:
+      // Valida usuarioId:
       UsuarioEntity novoUsuario = validateRequestId(pacienteRequest.usuarioId());
 
       paciente.setUsuario(novoUsuario);
@@ -85,27 +105,25 @@ public class PacienteService {
 
   public void delete(Long id) {
 
-    if (!pacienteRepository.existsById(id)) {//não faz sentido, mas blz
+    if (!pacienteRepository.existsById(id)) { // não faz sentido, mas blz
       throw new EntityNotFoundException("Nenhum paciente encontrado com id: " + id);
     }
     pacienteRepository.deleteById(id);
-
   }
 
-  private UsuarioEntity validateRequestId(Long usuarioId){
+  private UsuarioEntity validateRequestId(Long usuarioId) {
     // verifica se existe usuario com id do request:
     UsuarioEntity usuario =
-            usuarioRepository
-                    .findById(usuarioId)
-                    .orElseThrow(
-                            () ->
-                                    // new EntityNotFoundException(
-                                    new IllegalArgumentException(
-                                            "Não existe usuario com id: " + usuarioId));
+        usuarioRepository
+            .findById(usuarioId)
+            .orElseThrow(
+                () ->
+                    // new EntityNotFoundException(
+                    new IllegalArgumentException("Não existe usuario com id: " + usuarioId));
     // e se usuario é paciente:
     if (!usuario.isPaciente()) {
       throw new IllegalArgumentException(
-              "Usuário com id " + usuarioId + " não tem perfil de 'PACIENTE'");
+          "Usuário com id " + usuarioId + " não tem perfil de 'PACIENTE'");
     }
 
     // if (pacienteRepository.existsByUsuario(usuario)) {
@@ -114,6 +132,4 @@ public class PacienteService {
     }
     return usuario;
   }
-
-
 }

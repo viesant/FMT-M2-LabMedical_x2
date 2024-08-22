@@ -28,7 +28,7 @@ public class AuthService {
     Authentication authentication = authenticationManager.authenticate(authToken);
 
     // geração de token:
-    long expiration = 3600L;
+    long expiration = 36000L;
     Instant now = Instant.now();
 
     String perfis =
