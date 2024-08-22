@@ -35,7 +35,7 @@ public class UsuarioController {
   @GetMapping
   @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
   @ResponseStatus(HttpStatus.OK)
-  public List<UsuarioEntity> getAllUsers() {
+  public List<UsuarioEntity> readAllUsers() {
     return usuarioService.findAll();
   }
 }
