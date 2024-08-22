@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -39,29 +40,22 @@ public class PacienteController {
   @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   public PacienteEntity getUserById(@PathVariable Long id, JwtAuthenticationToken token) {
-    return pacienteService.findById(id,token);
+    return pacienteService.findById(id, token);
   }
 
-/*
-  @GetMapping("/{id}")
+  @PutMapping("/{id}")
+  @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
   @ResponseStatus(HttpStatus.OK)
-  public  getPacienteById(@PathVariable Long id) {
-    return pacienteService.findById(id);
-  }
-  @GetMapping("/{id}")
-  public ResponseEntity<PacienteEntity> buscaPacientePorId(@PathVariable Long id, JwtAuthenticationToken token) {
-    return ResponseEntity.ok(pacienteService.buscaPacientePorId(id, token));
-  }
-*/
+  public PacienteEntity createUser(
+      @PathVariable Long id, @Valid @RequestBody PacienteRequest pacienteRequest) {
 
+    return pacienteService.update(id, pacienteRequest);
+  }
 
-  // Get{Id}
   // GetAll (pageable+filter)
 
   // Put{id}
 
-  //Delete{id}
-
-
+  // Delete{id}
 
 }
