@@ -83,6 +83,14 @@ public class PacienteService {
     return pacienteRepository.save(paciente);
   }
 
+  public void delete(Long id) {
+
+    if (!pacienteRepository.existsById(id)) {//não faz sentido, mas blz
+      throw new EntityNotFoundException("Nenhum paciente encontrado com id: " + id);
+    }
+    pacienteRepository.deleteById(id);
+
+  }
 
   private UsuarioEntity validateRequestId(Long usuarioId){
     // verifica se existe usuario com id do request:

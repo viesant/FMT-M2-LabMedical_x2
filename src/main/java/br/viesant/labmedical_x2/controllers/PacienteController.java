@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,9 +53,18 @@ public class PacienteController {
     return pacienteService.update(id, pacienteRequest);
   }
 
+  @DeleteMapping("/{id}")
+  @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteUser(
+          @PathVariable Long id) {
+
+    pacienteService.delete(id);
+  }
+
   // GetAll (pageable+filter)
 
-  // Put{id}
+
 
   // Delete{id}
 
