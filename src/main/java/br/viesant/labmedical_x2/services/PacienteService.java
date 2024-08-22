@@ -1,8 +1,10 @@
 package br.viesant.labmedical_x2.services;
 
 import static br.viesant.labmedical_x2.mappers.PacienteMapper.toEntity;
+import static br.viesant.labmedical_x2.mappers.PacienteMapper.toResponse;
 import static br.viesant.labmedical_x2.mappers.PacienteMapper.updateEntity;
 
+import br.viesant.labmedical_x2.controllers.DTO.PacienteFilteredResponse;
 import br.viesant.labmedical_x2.controllers.DTO.PacienteRequest;
 import br.viesant.labmedical_x2.controllers.DTO.PacienteResponse;
 import br.viesant.labmedical_x2.entities.PacienteEntity;
@@ -28,17 +30,17 @@ public class PacienteService {
   private final UsuarioRepository usuarioRepository;
   private final PacienteRepository pacienteRepository;
 
-  public PacienteEntity create(PacienteRequest pacienteRequest) {
+  public PacienteResponse create(PacienteRequest pacienteRequest) {
     // Valida usuarioId:
     UsuarioEntity usuario = validateRequestId(pacienteRequest.usuarioId());
 
     // mapeia request to entity:
     PacienteEntity paciente = toEntity(pacienteRequest, usuario);
 
-    return pacienteRepository.save(paciente);
+    return toResponse(pacienteRepository.save(paciente));
   }
 
-  public PacienteEntity findById(Long id, JwtAuthenticationToken token) {
+  public PacienteResponse findById(Long id, JwtAuthenticationToken token) {
 
     // valida se usuario recebido no token existe
     UsuarioEntity usuario =
@@ -60,10 +62,11 @@ public class PacienteService {
       }
     }
 
-    return pacienteRepository
-        .findById(id)
-        .orElseThrow(
-            () -> new EntityNotFoundException("Nenhum paciente encontrado " + "com id: " + id));
+    return toResponse(
+        pacienteRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Nenhum paciente encontrado com id: " + id)));
   }
 
   public List<PacienteResponse> findAll() {
@@ -72,15 +75,18 @@ public class PacienteService {
         .collect(Collectors.toList());
   }
 
-  public Page<PacienteResponse> findAll(String nome, String telefone, String email, Pageable pageable) {
+  public Page<PacienteFilteredResponse> findAll(
+      String nome, String telefone, String email, Pageable pageable) {
 
-    return pacienteRepository.findByFilters(nome, telefone,email, pageable).map(PacienteMapper::toResponse);
+    return pacienteRepository
+        .findByFilters(nome, telefone, email, pageable)
+        .map(PacienteMapper::toFilteredResponse);
 
-//    return pacienteRepository.findAllByNomeContainingAndTelefoneContainingAndEmailContaining(
-//            nome, telefone, email, pageable);
+    //    return pacienteRepository.findAllByNomeContainingAndTelefoneContainingAndEmailContaining(
+    //            nome, telefone, email, pageable);
   }
 
-  public PacienteEntity update(Long id, PacienteRequest pacienteRequest) {
+  public PacienteResponse update(Long id, PacienteRequest pacienteRequest) {
 
     PacienteEntity paciente =
         pacienteRepository
@@ -100,7 +106,7 @@ public class PacienteService {
     // mapeia usuarioRequest para usuarioEntity:
     updateEntity(pacienteRequest, paciente);
 
-    return pacienteRepository.save(paciente);
+    return toResponse(pacienteRepository.save(paciente));
   }
 
   public void delete(Long id) {

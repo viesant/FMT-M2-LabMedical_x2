@@ -1,6 +1,7 @@
 package br.viesant.labmedical_x2.controllers;
 
 import br.viesant.labmedical_x2.controllers.DTO.PacienteRequest;
+import br.viesant.labmedical_x2.controllers.DTO.PacienteFilteredResponse;
 import br.viesant.labmedical_x2.controllers.DTO.PacienteResponse;
 import br.viesant.labmedical_x2.entities.PacienteEntity;
 import br.viesant.labmedical_x2.services.PacienteService;
@@ -35,14 +36,14 @@ public class PacienteController {
   @PostMapping
   @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN', 'SCOPE_MEDICO')")
   @ResponseStatus(HttpStatus.CREATED)
-  public PacienteEntity createPaciente(@Valid @RequestBody PacienteRequest pacienteRequest) {
+  public PacienteResponse createPaciente(@Valid @RequestBody PacienteRequest pacienteRequest) {
 
     return pacienteService.create(pacienteRequest);
   }
 
   @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public PacienteEntity readPaciente(@PathVariable Long id, JwtAuthenticationToken token) {
+  public PacienteResponse readPaciente(@PathVariable Long id, JwtAuthenticationToken token) {
 
     return pacienteService.findById(id, token);
   }
@@ -50,7 +51,7 @@ public class PacienteController {
   @GetMapping
   @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN', 'SCOPE_MEDICO')")
   @ResponseStatus(HttpStatus.OK)
-  public Page<PacienteResponse> readAllPacientesPageable(
+  public Page<PacienteFilteredResponse> readAllPacientesPageable(
       @RequestParam(required = false, defaultValue = "") String nome,
       @RequestParam(required = false, defaultValue = "") String telefone,
       @RequestParam(required = false, defaultValue = "") String email,
@@ -70,7 +71,7 @@ public class PacienteController {
   @PutMapping("/{id}")
   @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN', 'SCOPE_MEDICO')")
   @ResponseStatus(HttpStatus.OK)
-  public PacienteEntity updatePaciente(
+  public PacienteResponse updatePaciente(
       @PathVariable Long id, @Valid @RequestBody PacienteRequest pacienteRequest) {
 
     return pacienteService.update(id, pacienteRequest);

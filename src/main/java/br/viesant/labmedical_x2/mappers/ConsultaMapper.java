@@ -9,6 +9,7 @@ public class ConsultaMapper {
 
   public static ConsultaResponse toResponse(ConsultaEntity source) {
     return new ConsultaResponse(
+        source.getId(),
         source.getMotivo(),
         source.getData(),
         source.getHorario(),

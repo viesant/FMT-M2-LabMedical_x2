@@ -1,5 +1,6 @@
 package br.viesant.labmedical_x2.controllers;
 
+import br.viesant.labmedical_x2.controllers.DTO.UsuarioReponse;
 import br.viesant.labmedical_x2.controllers.DTO.UsuarioRequest;
 import br.viesant.labmedical_x2.entities.UsuarioEntity;
 import br.viesant.labmedical_x2.services.UsuarioService;
@@ -27,7 +28,7 @@ public class UsuarioController {
   @PostMapping
   @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
   @ResponseStatus(HttpStatus.CREATED)
-  public UsuarioEntity createUser(@Valid @RequestBody UsuarioRequest usuarioRequest) {
+  public UsuarioReponse createUser(@Valid @RequestBody UsuarioRequest usuarioRequest) {
     return usuarioService.create(usuarioRequest);
   }
 
@@ -35,7 +36,7 @@ public class UsuarioController {
   @GetMapping
   @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN')")
   @ResponseStatus(HttpStatus.OK)
-  public List<UsuarioEntity> readAllUsers() {
+  public List<UsuarioReponse> readAllUsers() {
     return usuarioService.findAll();
   }
 }

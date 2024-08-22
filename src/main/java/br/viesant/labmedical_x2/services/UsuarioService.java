@@ -2,9 +2,11 @@ package br.viesant.labmedical_x2.services;
 
 import static br.viesant.labmedical_x2.mappers.UsuarioMapper.*;
 
+import br.viesant.labmedical_x2.controllers.DTO.UsuarioReponse;
 import br.viesant.labmedical_x2.controllers.DTO.UsuarioRequest;
 import br.viesant.labmedical_x2.entities.PerfilEntity;
 import br.viesant.labmedical_x2.entities.UsuarioEntity;
+import br.viesant.labmedical_x2.mappers.UsuarioMapper;
 import br.viesant.labmedical_x2.repositories.PerfilRepository;
 import br.viesant.labmedical_x2.repositories.UsuarioRepository;
 import com.sun.jdi.request.DuplicateRequestException;
@@ -32,7 +34,7 @@ public class UsuarioService implements UserDetailsService {
         .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
   }
 
-  public UsuarioEntity create(UsuarioRequest usuarioRequest) {
+  public UsuarioReponse create(UsuarioRequest usuarioRequest) {
 
     // verifica se usuario já foi cadastrado
     if (usuarioRepository.existsByEmail(usuarioRequest.email())) {
@@ -60,15 +62,16 @@ public class UsuarioService implements UserDetailsService {
     // mapeia request to entity:
     UsuarioEntity usuario = toEntity(usuarioRequest, perfis);
 
-
     // encripta senha:
     usuario.setSenha(passwordEncoder.encode(usuarioRequest.senha()));
 
-    return usuarioRepository.save(usuario);
+    return toResponse(usuarioRepository.save(usuario));
   }
 
   // para testes:
-  public List<UsuarioEntity> findAll() {
-    return usuarioRepository.findAll();
+  public List<UsuarioReponse> findAll() {
+    return usuarioRepository.findAll().stream()
+        .map(UsuarioMapper::toResponse)
+        .collect(Collectors.toList());
   }
 }
