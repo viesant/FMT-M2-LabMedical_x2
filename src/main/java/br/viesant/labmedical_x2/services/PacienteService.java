@@ -79,7 +79,7 @@ public class PacienteService {
       String nome, String telefone, String email, Pageable pageable) {
 
     return pacienteRepository
-        .findByFilters(nome, telefone, email, pageable)
+        .findByFilters(null, nome, telefone, email, pageable)
         .map(PacienteMapper::toFilteredResponse);
 
     //    return pacienteRepository.findAllByNomeContainingAndTelefoneContainingAndEmailContaining(

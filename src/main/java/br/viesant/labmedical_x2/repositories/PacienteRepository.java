@@ -25,12 +25,34 @@ public interface PacienteRepository extends JpaRepository<PacienteEntity, Long> 
 
   @Query(
       "SELECT p FROM PacienteEntity p "
-          + "WHERE (:nome IS NULL OR p.nome ILIKE %:nome%) "
+          + "WHERE (:id IS NULL OR p.id = :id) "
+          + "AND (:nome IS NULL OR p.nome ILIKE %:nome%) "
           + "AND (:telefone IS NULL OR p.telefone ILIKE %:telefone%) "
           + "AND (:email IS NULL OR p.email ILIKE %:email%)")
   Page<PacienteEntity> findByFilters(
+      @Param("id") Long id,
       @Param("nome") String nome,
       @Param("telefone") String telefone,
       @Param("email") String email,
       Pageable pageable);
+
+  //  @Query(
+  //      "SELECT p FROM PacienteEntity p "
+  //          + "WHERE (:nome IS NULL OR p.nome ILIKE %:nome%) "
+  //          + "AND (:telefone IS NULL OR p.telefone ILIKE %:telefone%) "
+  //          + "AND (:email IS NULL OR p.email ILIKE %:email%)")
+  //  Page<PacienteEntity> findByFilters(
+  //      @Param("nome") String nome,
+  //      @Param("telefone") String telefone,
+  //      @Param("email") String email,
+  //      Pageable pageable);
+  //
+  //  @Query(
+  //          "SELECT p FROM PacienteEntity p "
+  //                  + "WHERE (:id IS NULL OR p.id = :id) "
+  //                  + "AND (:nome IS NULL OR p.nome ILIKE %:nome%) ")
+  //  Page<PacienteEntity> findByFilters(
+  //          @Param("id") Long id,
+  //          @Param("nome") String nome,
+  //          Pageable pageable);
 }

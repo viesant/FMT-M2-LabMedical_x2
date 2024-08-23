@@ -1,9 +1,8 @@
 package br.viesant.labmedical_x2.controllers;
 
-import br.viesant.labmedical_x2.controllers.DTO.PacienteRequest;
 import br.viesant.labmedical_x2.controllers.DTO.PacienteFilteredResponse;
+import br.viesant.labmedical_x2.controllers.DTO.PacienteRequest;
 import br.viesant.labmedical_x2.controllers.DTO.PacienteResponse;
-import br.viesant.labmedical_x2.entities.PacienteEntity;
 import br.viesant.labmedical_x2.services.PacienteService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -52,9 +51,9 @@ public class PacienteController {
   @PreAuthorize("hasAnyAuthority('SCOPE_ADMIN', 'SCOPE_MEDICO')")
   @ResponseStatus(HttpStatus.OK)
   public Page<PacienteFilteredResponse> readAllPacientesPageable(
-      @RequestParam(required = false, defaultValue = "") String nome,
-      @RequestParam(required = false, defaultValue = "") String telefone,
-      @RequestParam(required = false, defaultValue = "") String email,
+      @RequestParam(required = false) String nome,
+      @RequestParam(required = false) String telefone,
+      @RequestParam(required = false) String email,
       Pageable pageable) {
     return pacienteService.findAll(nome, telefone, email, pageable);
   }

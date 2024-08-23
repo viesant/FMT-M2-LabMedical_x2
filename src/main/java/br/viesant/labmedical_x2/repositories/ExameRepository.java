@@ -12,6 +12,10 @@ import java.util.Optional;
 @Repository
 public interface ExameRepository extends JpaRepository<ExameEntity, Long> {
   List<ExameResponse> findAllByPacienteId(Long pacienteId);
+  List<ExameResponse> findAllByPacienteIdOrderByDataAsc(Long pacienteId);
+  List<ExameResponse> findAllByPacienteIdOrderByDataAscHorarioAsc(Long pacienteId);
+
+
 
   Optional<ExameResponse> findByIdAndPacienteId(Long id, Long id1);
 }

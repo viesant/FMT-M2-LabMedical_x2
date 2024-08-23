@@ -15,6 +15,7 @@ public class UsuarioMapper {
             source.getNome(),
             source.getEmail(),
             source.getSenha(),
+            source.getDataNascimento(),
             source.getCpf(),
             source.getPerfis());
     return target;
